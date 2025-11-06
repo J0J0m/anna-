@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mega Cell - Loja de Smartphones</title>
+    <link rel="stylesheet" href="styles.css"> 
+    <style>
+        /* Apenas um CSS rápido para o efeito de "flash" no ícone do carrinho */
+        .flash-cart {
+            animation: flash 0.5s;
+        }
+        @keyframes flash {
+            0% { transform: scale(1); background-color: transparent; }
+            50% { transform: scale(1.2); background-color: #ffcc00; border-radius: 50%; }
+            100% { transform: scale(1); background-color: transparent; }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="store-header">
+        <div class="cart-icon" title="Ver Carrinho" onclick="toggleCart()">
+            🛒 <span id="cart-counter" class="counter">0</span>
+        </div>
+        <h1>Mega Cell: Sua Loja de Smartphones</h1>
+        <p>Tecnologia de ponta ao seu alcance.</p>
+    </header>
+
+    <div class="product-grid">
+
+        <div class="product-card item-premium">
+            <div class="image-container">
+                <img src="caminho/imagem-celular-premium.jpg" alt="Smartphone Ultra X" class="product-image">
+            </div>
+            <div class="product-info">
+                <h3 class="product-name">Smartphone Ultra X 5G</h3>
+                <p class="product-price">R$ 6.999,00</p>
+                <button class="buy-button" 
+                        onclick="addToCart(this)" 
+                        data-name="Smartphone Ultra X 5G" 
+                        data-price="6999.00">COMPRAR</button>
+            </div>
+        </div>
+
+        <div class="product-card item-medio">
+            <div class="image-container">
+                <img src="caminho/imagem-celular-compact.jpg" alt="Celular Compact Pro" class="product-image">
+            </div>
+            <div class="product-info">
+                <h3 class="product-name">Celular Compact Pro</h3>
+                <p class="product-price">R$ 2.450,00</p>
+                <button class="buy-button" 
+                        onclick="addToCart(this)" 
+                        data-name="Celular Compact Pro" 
+                        data-price="2450.00">COMPRAR</button>
+            </div>
+        </div>
+
+        <div class="product-card item-medio">
+            <div class="image-container">
+                <img src="caminho/imagem-celular-lite.jpg" alt="Phone Lite 5G" class="product-image">
+            </div>
+            <div class="product-info">
+                <h3 class="product-name">Phone Lite 5G</h3>
+                <p class="product-price">R$ 1.899,00</p>
+                <button class="buy-button" 
+                        onclick="addToCart(this)" 
+                        data-name="Phone Lite 5G" 
+                        data-price="1899.00">COMPRAR</button>
+            </div>
+        </div>
+
+        <div class="product-card item-plus">
+            <div class="image-container">
+                <img src="caminho/imagem-celular-plus.jpg" alt="Smart Plus Max" class="product-image">
+            </div>
+            <div class="product-info">
+                <h3 class="product-name">Smart Plus Max</h3>
+                <p class="product-price">R$ 3.800,00</p>
+                <button class="buy-button" 
+                        onclick="addToCart(this)" 
+                        data-name="Smart Plus Max" 
+                        data-price="3800.00">COMPRAR</button>
+            </div>
+        </div>
+
+        <div class="product-card item-basico">
+            <div class="image-container">
+                <img src="caminho/imagem-celular-basico.jpg" alt="Modelo Básico Essencial" class="product-image">
+            </div>
+            <div class="product-info">
+                <h3 class="product-name">Modelo Básico Essencial</h3>
+                <p class="product-price">R$ 950,00</p>
+                <button class="buy-button" 
+                        onclick="addToCart(this)" 
+                        data-name="Modelo Básico Essencial" 
+                        data-price="950.00">COMPRAR</button>
+            </div>
+        </div>
+
+        <div class="product-card item-gamer">
+            <div class="image-container">
+                <img src="caminho/imagem-celular-gamer.jpg" alt="Gamer Xtreme Edition" class="product-image">
+            </div>
+            <div class="product-info">
+                <h3 class="product-name">Gamer Xtreme Edition</h3>
+                <p class="product-price">R$ 5.500,00</p>
+                <button class="buy-button" 
+                        onclick="addToCart(this)" 
+                        data-name="Gamer Xtreme Edition" 
+                        data-price="5500.00">COMPRAR</button>
+            </div>
+        </div>
+
+    </div>
+    
+    <div id="cart-panel" class="cart-panel">
+        <h2>🛒 Seu Carrinho de Compras 🛒</h2>
+        <button class="close-btn" onclick="toggleCart()">X</button>
+        <ul id="cart-list" class="cart-list">
+            <li class="empty-message">Nenhum celular selecionado...</li>
+        </ul>
+        <div class="cart-footer">
+            <p>Total: <span id="cart-total">R$ 0,00</span></p>
+            <button class="checkout-btn">Finalizar Pedido</button>
+        </div>
+    </div>
+    
+    <script>
+        // CÓDIGO JAVASCRIPT COMPLETO E FUNCIONAL (MANTIDO)
+
+        // Variáveis que vão armazenar os elementos HTML
+        let cartCount = 0;
+        let cart = [];
+        let cartCounterElement, cartListElement, cartTotalElement, cartPanelElement, cartIconElement;
+
+        // Garante que o código só rode depois que o HTML estiver carregado
+        window.onload = function() {
+            // 1. Referências aos elementos HTML
+            cartCounterElement = document.getElementById('cart-counter');
+            cartListElement = document.getElementById('cart-list');
+            cartTotalElement = document.getElementById('cart-total');
+            cartPanelElement = document.getElementById('cart-panel');
+            cartIconElement = document.querySelector('.cart-icon');
+            
+            // 2. Inicializa a exibição do carrinho
+            updateCartDisplay();
+        };
+
+        /**
+         * Adiciona um produto ao carrinho.
+         * @param {HTMLElement} buttonElement - O botão clicado.
+         */
+        function addToCart(buttonElement) {
+            // Pega o nome e o preço dos atributos data-
+            const productName = buttonElement.getAttribute('data-name');
+            const price = parseFloat(buttonElement.getAttribute('data-price')); 
+
+            if (isNaN(price)) {
+                console.error("Erro: Preço inválido no data-price para " + productName);
+                return;
+            }
+
+            let found = cart.find(item => item.name === productName);
+
+            if (found) {
+                // Se o produto já existe, apenas incrementa a quantidade
+                found.quantity++;
+            } else {
+                // Se for o primeiro, adiciona como novo item
+                const newItem = { name: productName, price: price, quantity: 1 };
+                cart.push(newItem);
+            }
+
+            updateCartDisplay();
+            
+            // Adiciona efeito visual no ícone do carrinho
+            if (cartIconElement) {
+                cartIconElement.classList.add('flash-cart');
+                setTimeout(() => {
+                    cartIconElement.classList.remove('flash-cart');
+                }, 500);
+            }
+        }
+        
+        /**
+         * Remove UMA unidade de um produto do carrinho.
+         */
+        function removeFromCart(productName) {
+             let itemIndex = cart.findIndex(item => item.name === productName);
+
+            if (itemIndex > -1) {
+                cart[itemIndex].quantity--;
+                // Se a quantidade chegar a zero, remove o item da lista
+                if (cart[itemIndex].quantity === 0) {
+                    cart.splice(itemIndex, 1);
+                }
+            }
+            updateCartDisplay();
+        }
+
+        /**
+         * Atualiza o contador de itens e a lista de produtos no painel.
+         */
+        function updateCartDisplay() {
+            let totalItems = 0;
+            let totalPrice = 0;
+            
+            if (!cartListElement) return;
+
+            cartListElement.innerHTML = ''; // Limpa a lista antes de renderizar
+
+            if (cart.length === 0) {
+                const li = document.createElement('li');
+                li.className = 'empty-message';
+                li.textContent = 'Nenhum celular selecionado...';
+                cartListElement.appendChild(li);
+            } else {
+                cart.forEach(item => {
+                    const itemTotal = item.price * item.quantity;
+                    
+                    totalItems += item.quantity;
+                    totalPrice += itemTotal;
+
+                    const li = document.createElement('li');
+                    // Aqui usamos `toFixed(2).replace('.', ',')` para formatar o preço para o padrão brasileiro
+                    li.innerHTML = `
+                        <span class="item-name">${item.name}</span>
+                        <span class="item-details">
+                            ${item.quantity} x R$ ${item.price.toFixed(2).replace('.', ',')} 
+                        </span>
+                        <button class="remove-btn" onclick="removeFromCart('${item.name}')">x</button>
+                    `;
+                    cartListElement.appendChild(li);
+                });
+            }
+
+            if (cartCounterElement) cartCounterElement.textContent = totalItems;
+            if (cartTotalElement) cartTotalElement.textContent = `R$ ${totalPrice.toFixed(2).replace('.', ',')}`;
+        }
+
+        /**
+         * Abre e fecha o painel lateral do carrinho.
+         */
+        function toggleCart() {
+            if (!cartPanelElement) return;
+            
+            cartPanelElement.classList.toggle('open');
+            
+            // Garante que o display do carrinho esteja atualizado ao abrir
+            if (cartPanelElement.classList.contains('open')) {
+                 updateCartDisplay();
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,126 @@
+// CÓDIGO JAVASCRIPT COMPLETO E FUNCIONAL PARA O CARRINHO
+
+// Variáveis que vão armazenar os elementos HTML
+let cart = []; // Array principal que armazena os itens do carrinho
+let cartCounterElement, cartListElement, cartTotalElement, cartPanelElement, cartIconElement;
+
+// Garante que o código só rode depois que o HTML estiver carregado
+window.onload = function() {
+    // 1. Referências aos elementos HTML
+    cartCounterElement = document.getElementById('cart-counter');
+    cartListElement = document.getElementById('cart-list');
+    cartTotalElement = document.getElementById('cart-total');
+    cartPanelElement = document.getElementById('cart-panel');
+    cartIconElement = document.querySelector('.cart-icon');
+    
+    // 2. Inicializa a exibição do carrinho
+    updateCartDisplay();
+};
+
+/**
+ * Adiciona um produto ao carrinho.
+ * @param {HTMLElement} buttonElement - O botão "COMPRAR" clicado.
+ */
+function addToCart(buttonElement) {
+    // Pega o nome e o preço dos atributos data-
+    const productName = buttonElement.getAttribute('data-name');
+    const price = parseFloat(buttonElement.getAttribute('data-price')); 
+
+    if (isNaN(price)) {
+        console.error("Erro: Preço inválido no data-price para " + productName);
+        return;
+    }
+
+    let found = cart.find(item => item.name === productName);
+
+    if (found) {
+        // Se o produto já existe, apenas incrementa a quantidade
+        found.quantity++;
+    } else {
+        // Se for o primeiro, adiciona como novo item
+        const newItem = { name: productName, price: price, quantity: 1 };
+        cart.push(newItem);
+    }
+
+    updateCartDisplay();
+    
+    // Adiciona efeito visual (flash) no ícone do carrinho
+    if (cartIconElement) {
+        cartIconElement.classList.add('flash-cart');
+        setTimeout(() => {
+            cartIconElement.classList.remove('flash-cart');
+        }, 500);
+    }
+}
+
+/**
+ * Remove UMA unidade de um produto do carrinho.
+ * @param {string} productName - O nome do produto a ser removido/decrementado.
+ */
+function removeFromCart(productName) {
+     let itemIndex = cart.findIndex(item => item.name === productName);
+
+    if (itemIndex > -1) {
+        cart[itemIndex].quantity--;
+        // Se a quantidade chegar a zero, remove o item da lista
+        if (cart[itemIndex].quantity === 0) {
+            cart.splice(itemIndex, 1);
+        }
+    }
+    updateCartDisplay();
+}
+
+/**
+ * Atualiza o contador de itens e a lista de produtos no painel.
+ */
+function updateCartDisplay() {
+    let totalItems = 0;
+    let totalPrice = 0;
+    
+    if (!cartListElement) return;
+
+    cartListElement.innerHTML = ''; // Limpa a lista antes de renderizar
+
+    if (cart.length === 0) {
+        const li = document.createElement('li');
+        li.className = 'empty-message';
+        li.textContent = 'Nenhum celular selecionado...';
+        cartListElement.appendChild(li);
+    } else {
+        cart.forEach(item => {
+            const itemTotal = item.price * item.quantity;
+            
+            totalItems += item.quantity;
+            totalPrice += itemTotal;
+
+            const li = document.createElement('li');
+            // Formatação do preço (R$ 0.000,00)
+            li.innerHTML = `
+                <span class="item-name">${item.name}</span>
+                <span class="item-details">
+                    ${item.quantity} x R$ ${item.price.toFixed(2).replace('.', ',')} 
+                </span>
+                <button class="remove-btn" onclick="removeFromCart('${item.name}')">x</button>
+            `;
+            cartListElement.appendChild(li);
+        });
+    }
+
+    // Atualiza o contador e o valor total
+    if (cartCounterElement) cartCounterElement.textContent = totalItems;
+    if (cartTotalElement) cartTotalElement.textContent = `R$ ${totalPrice.toFixed(2).replace('.', ',')}`;
+}
+
+/**
+ * Abre e fecha o painel lateral do carrinho.
+ */
+function toggleCart() {
+    if (!cartPanelElement) return;
+    
+    cartPanelElement.classList.toggle('open');
+    
+    // Garante que o display do carrinho esteja atualizado ao abrir
+    if (cartPanelElement.classList.contains('open')) {
+         updateCartDisplay();
+    }
+}
