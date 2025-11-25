@@ -1,10 +1,103 @@
-// CÓDIGO JAVASCRIPT COMPLETO E FUNCIONAL PARA O CARRINHO
+const productsData = {
+    1: {
+        id: 1,
+        name: "Smartphone Ultra X 5G",
+        price: 6999.00,
+        image: "imagem/411de578293d219de9f0770203a1a963.webp",
+        description: "O ápice da tecnologia móvel. Câmera de 200MP, processador Snapdragon de última geração e bateria que dura 2 dias. Perfeito para quem exige o máximo.",
+        details: [
+            "Tela: 6.8 polegadas Dynamic AMOLED 120Hz",
+            "Processador: Snapdragon 8 Gen 3",
+            "Memória RAM: 12GB",
+            "Armazenamento: 512GB",
+            "Câmera: Principal 200MP, Ultra-wide 12MP, Telefoto 10MP",
+            "Bateria: 5000mAh com carregamento super-rápido"
+        ]
+    },
+    2: {
+        id: 2,
+        name: "Celular Compact Pro",
+        price: 2450.00,
+        image: "imagem/740x740_660301249A-1.webp",
+        description: "Potência e portabilidade em um só aparelho. Ideal para o dia a dia, com excelente desempenho e uma câmera de alta qualidade para registrar seus melhores momentos.",
+        details: [
+            "Tela: 6.1 polegadas Super Retina XDR",
+            "Processador: Chip A15 Bionic",
+            "Memória RAM: 6GB",
+            "Armazenamento: 128GB",
+            "Câmera: Dupla de 12MP (Principal e Ultra-wide)",
+            "Bateria: 3240mAh"
+        ]
+    },
+    3: {
+        id: 3,
+        name: "Phone Lite 5G",
+        price: 1899.00,
+        image: "imagem/Xiaomi-Mi-11-Lite-5g-Ne-Global-Dual-Sim-256gb-8GB-Ram-Tela-6-55-Peach-Pink_1727123526_gg.webp",
+        description: "A melhor relação custo-benefício do mercado. Conectividade 5G, tela AMOLED vibrante e design ultrafino. Tecnologia de ponta acessível.",
+        details: [
+            "Tela: 6.55 polegadas AMOLED 90Hz",
+            "Processador: Snapdragon 778G",
+            "Memória RAM: 8GB",
+            "Armazenamento: 256GB",
+            "Câmera: Tripla 64MP (Principal), 8MP (Ultra-wide), 5MP (Macro)",
+            "Bateria: 4250mAh"
+        ]
+    },
+    4: {
+        id: 4,
+        name: "Smart Plus Max",
+        price: 3800.00,
+        image: "imagem/spc-smart-plus-89716-g-alt.jpg",
+        description: "Um smartphone robusto com foco em produtividade. Tela grande e bateria de longa duração para acompanhar seu ritmo de trabalho e lazer.",
+        details: [
+            "Tela: 6.7 polegadas IPS LCD",
+            "Processador: MediaTek Helio G99",
+            "Memória RAM: 8GB",
+            "Armazenamento: 128GB (expansível)",
+            "Câmera: Principal 50MP",
+            "Bateria: 6000mAh"
+        ]
+    },
+    5: {
+        id: 5,
+        name: "Modelo Básico Essencial",
+        price: 950.00,
+        image: "imagem/06c237f24312d105bcc4d3ca36a81f92.webp",
+        description: "O celular ideal para quem busca o essencial. Chamadas, mensagens e redes sociais com facilidade. Simples, confiável e com preço imbatível.",
+        details: [
+            "Tela: 5.5 polegadas",
+            "Processador: Quad-core",
+            "Memória RAM: 2GB",
+            "Armazenamento: 32GB (expansível)",
+            "Câmera: 8MP",
+            "Bateria: 3000mAh"
+        ]
+    },
+    6: {
+        id: 6,
+        name: "Gamer Xtreme Edition",
+        price: 5500.00,
+        image: "imagem/Smartphone-Asus-Rog-Phone-8-Pro-Edition-1TB-5g-2-Snapdragon-8-Gen3-24gb-Ram-Tela-6-78-AmoLED-165hz-C-m-Tripla-50mp-32mp-Aeroactive-Cooler-Black_1722521456_gg.webp",
+        description: "Feito para gamers. Tela de 165Hz, gatilhos ultrassônicos e sistema de resfriamento avançado. Domine qualquer jogo com este monstro de performance.",
+        details: [
+            "Tela: 6.78 polegadas AMOLED 165Hz",
+            "Processador: Snapdragon 8 Gen 3",
+            "Memória RAM: 24GB",
+            "Armazenamento: 1TB",
+            "Câmera: Tripla 50MP",
+            "Bateria: 5500mAh"
+        ]
+    }
+};
 
-// Variáveis que vão armazenar os elementos HTML
-let cart = []; // Array principal que armazena os itens do carrinho
+// Variáveis que vão armazenar os elementos HTML (MANTIDO DO CÓDIGO ORIGINAL)
+let cartCount = 0;
+let cart = [];
 let cartCounterElement, cartListElement, cartTotalElement, cartPanelElement, cartIconElement;
+let currentProductId = null; // Variável para rastrear o produto no modal
 
-// Garante que o código só rode depois que o HTML estiver carregado
+// Garante que o código só rode depois que o HTML estiver carregado (MANTIDO DO CÓDIGO ORIGINAL)
 window.onload = function() {
     // 1. Referências aos elementos HTML
     cartCounterElement = document.getElementById('cart-counter');
@@ -18,8 +111,8 @@ window.onload = function() {
 };
 
 /**
- * Adiciona um produto ao carrinho.
- * @param {HTMLElement} buttonElement - O botão "COMPRAR" clicado.
+ * Adiciona um produto ao carrinho. (MANTIDO DO CÓDIGO ORIGINAL)
+ * @param {HTMLElement} buttonElement - O botão clicado.
  */
 function addToCart(buttonElement) {
     // Pega o nome e o preço dos atributos data-
@@ -44,7 +137,7 @@ function addToCart(buttonElement) {
 
     updateCartDisplay();
     
-    // Adiciona efeito visual (flash) no ícone do carrinho
+    // Adiciona efeito visual no ícone do carrinho
     if (cartIconElement) {
         cartIconElement.classList.add('flash-cart');
         setTimeout(() => {
@@ -54,8 +147,7 @@ function addToCart(buttonElement) {
 }
 
 /**
- * Remove UMA unidade de um produto do carrinho.
- * @param {string} productName - O nome do produto a ser removido/decrementado.
+ * Remove UMA unidade de um produto do carrinho. (MANTIDO DO CÓDIGO ORIGINAL)
  */
 function removeFromCart(productName) {
      let itemIndex = cart.findIndex(item => item.name === productName);
@@ -71,7 +163,7 @@ function removeFromCart(productName) {
 }
 
 /**
- * Atualiza o contador de itens e a lista de produtos no painel.
+ * Atualiza o contador de itens e a lista de produtos no painel. (MANTIDO DO CÓDIGO ORIGINAL)
  */
 function updateCartDisplay() {
     let totalItems = 0;
@@ -94,7 +186,7 @@ function updateCartDisplay() {
             totalPrice += itemTotal;
 
             const li = document.createElement('li');
-            // Formatação do preço (R$ 0.000,00)
+            // Aqui usamos `toFixed(2).replace('.', ',')` para formatar o preço para o padrão brasileiro
             li.innerHTML = `
                 <span class="item-name">${item.name}</span>
                 <span class="item-details">
@@ -106,13 +198,12 @@ function updateCartDisplay() {
         });
     }
 
-    // Atualiza o contador e o valor total
     if (cartCounterElement) cartCounterElement.textContent = totalItems;
     if (cartTotalElement) cartTotalElement.textContent = `R$ ${totalPrice.toFixed(2).replace('.', ',')}`;
 }
 
 /**
- * Abre e fecha o painel lateral do carrinho.
+ * Abre e fecha o painel lateral do carrinho. (MANTIDO DO CÓDIGO ORIGINAL)
  */
 function toggleCart() {
     if (!cartPanelElement) return;
@@ -123,4 +214,83 @@ function toggleCart() {
     if (cartPanelElement.classList.contains('open')) {
          updateCartDisplay();
     }
+}
+
+// ====================================================================
+// NOVAS FUNÇÕES PARA O MODAL DE DETALHES DO PRODUTO
+// ====================================================================
+
+// Função para mostrar detalhes do produto
+function showProductDetails(productId) {
+    const product = productsData[productId];
+    if (!product) return;
+    
+    currentProductId = productId;
+    
+    // Preencher informações no modal
+    document.getElementById('modal-product-image').src = product.image;
+    document.getElementById('modal-product-name').textContent = product.name;
+    document.getElementById('modal-product-price').textContent = `R$ ${product.price.toFixed(2).replace('.', ',')}`;
+    document.getElementById('modal-product-description').textContent = product.description;
+    
+    // Preencher detalhes
+    const detailsList = document.getElementById('modal-product-details');
+    detailsList.innerHTML = '';
+    product.details.forEach(detail => {
+        const li = document.createElement('li');
+        li.textContent = detail;
+        detailsList.appendChild(li);
+    });
+    
+    // Mostrar modal
+    const modal = document.getElementById('product-modal');
+    modal.classList.add('active');
+    document.body.style.overflow = 'hidden';
+}
+
+// Função para fechar detalhes do produto
+function closeProductDetails() {
+    const modal = document.getElementById('product-modal');
+    modal.classList.remove('active');
+    document.body.style.overflow = 'auto';
+    currentProductId = null;
+}
+
+// Fechar modal ao clicar fora dele
+document.addEventListener('click', function(event) {
+    const modal = document.getElementById('product-modal');
+    if (event.target === modal) {
+        closeProductDetails();
+    }
+});
+
+// Fechar modal com tecla ESC
+document.addEventListener('keydown', function(event) {
+    if (event.key === 'Escape') {
+        closeProductDetails();
+    }
+});
+
+// Adicionar ao carrinho a partir do modal (usando a função addToCart existente)
+function addToCartFromModal() {
+    if (!currentProductId) return;
+    
+    const product = productsData[currentProductId];
+    
+    // Criar um objeto temporário para simular o botão e usar a função addToCart existente
+    const tempButton = {
+        getAttribute: (attr) => {
+            if (attr === 'data-name') return product.name;
+            if (attr === 'data-price') return product.price.toFixed(2);
+            return null;
+        }
+    };
+    
+    // Chamar a função addToCart existente
+    addToCart(tempButton);
+    
+    closeProductDetails();
+    
+    // Mostrar feedback visual
+    alert(`${product.name} foi adicionado ao carrinho!`);
 }
